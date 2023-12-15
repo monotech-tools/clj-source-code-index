@@ -72,18 +72,35 @@
 ;; ----------------------------------------------------------------------------
 ;; ----------------------------------------------------------------------------
 
-(defn filter-index
+(defn filter-stored-index
+  ; @ignore
+  ;
+  ; @description
+  ; Removes source paths from the given 'stored-index' that are not provided in the 'source-paths' property.
+  ;
+  ; @param (maps in vector) stored-index
+  ; @param (maps in vector) updated-index
+  ; @param (map) options
+  ;
+  ; @return (maps in vector)
+  [stored-index _ {:keys [source-paths]}]
+  (letfn [(f0 [%] (vector/contains-item? source-paths (:source-path %)))]
+         (vector/keep-items-by stored-index f0)))
+
+(defn filter-updated-index
   ; @ignore
   ;
   ; @description
   ; Removes source paths from the given 'updated-index' that are not present in the given 'stored-index',
-  ; to prevent misunderstanding declaration changes when a source path has not been even indexed before.
+  ; to prevent misunderstanding declaration changes when a source path is indexed for the first time,
+  ; and it has no entry in the stored index yet.
   ;
   ; @param (maps in vector) stored-index
   ; @param (maps in vector) updated-index
+  ; @param (map) options
   ;
   ; @return (maps in vector)
-  [stored-index updated-index]
+  [stored-index updated-index _]
   (letfn [(f0 [%] (when (source-path-not-indexed? stored-index                   (:source-path %))
                         (println core.messages/MISSING-SOURCE-PATH-INDEX-WARNING (:source-path %))
                         (-> :filter-not-indexed-source-path)))]
@@ -129,19 +146,22 @@
   ;
   ; @param (maps in vector) stored-index
   ; @param (maps in vector) updated-index
+  ; @param (map) options
   ;
   ; @return (map)
   ; {:added (strings in vector)
   ;  :removed (strings in vector)}
-  [stored-index updated-index]
-  (letfn [(f0 [added]               (reduce f2 added   updated-index))
-          (f1 [removed]             (reduce f3 removed stored-index))
-          (f2 [added   source-data] (reduce f4 added   (:source-files source-data)))
-          (f3 [removed source-data] (reduce f5 removed (:source-files source-data)))
-          (f4 [added   file-data]   (derive-added-declarations   stored-index updated-index added   file-data))
-          (f5 [removed file-data]   (derive-removed-declarations stored-index updated-index removed file-data))]
-         {:added   (f0 [])
-          :removed (f1 [])}))
+  [stored-index updated-index options]
+  (let [stored-index  (filter-stored-index  stored-index updated-index options)
+        updated-index (filter-updated-index stored-index updated-index options)]
+       (letfn [(f0 [added]               (reduce f2 added   updated-index))
+               (f1 [removed]             (reduce f3 removed stored-index))
+               (f2 [added   source-data] (reduce f4 added   (:source-files source-data)))
+               (f3 [removed source-data] (reduce f5 removed (:source-files source-data)))
+               (f4 [added   file-data]   (derive-added-declarations   stored-index updated-index added   file-data))
+               (f5 [removed file-data]   (derive-removed-declarations stored-index updated-index removed file-data))]
+              {:added   (f0 [])
+               :removed (f1 [])})))
 
 ;; ----------------------------------------------------------------------------
 ;; ----------------------------------------------------------------------------

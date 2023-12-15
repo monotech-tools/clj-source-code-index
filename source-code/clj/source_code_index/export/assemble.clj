@@ -3,7 +3,9 @@
     (:require [fruits.regex.api :as regex]
               [fruits.string.api :as string]
               [fruits.vector.api :as vector]
-              [time.api :as time]))
+              [time.api :as time]
+              [io.api :as io]
+              [source-code-index.export.config :as export.config]))
 
 ;; ----------------------------------------------------------------------------
 ;; ----------------------------------------------------------------------------
@@ -13,11 +15,10 @@
   ;
   ; @param (maps in vector) index
   ; @param (map) options
-  ; @param (string) file-content
   ; @param (map) changes
   ;
   ; @return (string)
-  [_ _ _ {:keys [added]}]
+  [_ _ {:keys [added]}]
   (letfn [(f0 [%] (str "\n\n- " % " [added]"))]
          (-> added (vector/->items f0)
                    (string/join))))
@@ -27,11 +28,10 @@
   ;
   ; @param (maps in vector) index
   ; @param (map) options
-  ; @param (string) file-content
   ; @param (map) changes
   ;
   ; @return (string)
-  [_ _ _ {:keys [removed]}]
+  [_ _ {:keys [removed]}]
   (letfn [(f0 [%] (str "\n\n- " % " [removed]"))]
          (-> removed (vector/->items f0)
                      (string/join))))
@@ -41,13 +41,12 @@
   ;
   ; @param (maps in vector) index
   ; @param (map) options
-  ; @param (string) file-content
   ; @param (map) changes
   ;
   ; @return (string)
-  [index options file-content changes]
-  (str (assemble-added-declarations   index options file-content changes)
-       (assemble-removed-declarations index options file-content changes)))
+  [index options changes]
+  (str (assemble-added-declarations   index options changes)
+       (assemble-removed-declarations index options changes)))
 
 ;; ----------------------------------------------------------------------------
 ;; ----------------------------------------------------------------------------
@@ -57,26 +56,24 @@
   ;
   ; @param (maps in vector) index
   ; @param (map) options
-  ; @param (string) file-content
   ; @param (map) changes
   ;
   ; @return (string)
-  [index {:keys [version]} _ _]
+  [index {:keys [version]} _]
   (let [date (-> index first :indexed-at time/timestamp-string->date)]
-       (str "\n### [n/a] - " date)))
+       (str "\n\n### [n/a] - " date)))
 
 (defn assemble-version-header
   ; @ignore
   ;
   ; @param (maps in vector) index
   ; @param (map) options
-  ; @param (string) file-content
   ; @param (map) changes
   ;
   ; @return (string)
-  [index {:keys [version]} _ _]
+  [index {:keys [version]} _]
   (let [date (-> index first :indexed-at time/timestamp-string->date)]
-       (str "\n### [" version "] - " date)))
+       (str "\n\n### [" version "] - " date)))
 
 ;; ----------------------------------------------------------------------------
 ;; ----------------------------------------------------------------------------
@@ -86,17 +83,19 @@
   ;
   ; @param (maps in vector) index
   ; @param (map) options
-  ; @param (string) file-content
   ; @param (map) changes
   ;
   ; @return (string)
-  [index {:keys [version] :as options} file-content changes]
-  (if-let [last-version (regex/re-last file-content #"(?<=\n\#\s\[).*(?=\]\s\-\s[\d]{4,4}\-[\d]{2,2}\-[\d]{2,2})")]
-          (cond (-> version empty?)           (str file-content (assemble-changed-declarations index options file-content changes))
-                (-> version (= last-version)) (str file-content (assemble-changed-declarations index options file-content changes))
-                :use-version                  (str file-content (assemble-version-header       index options file-content changes)
-                                                                (assemble-changed-declarations index options file-content changes)))
-          (cond (-> version empty?)           (str file-content (assemble-na-header            index options file-content changes)
-                                                                (assemble-changed-declarations index options file-content changes))
-                :use-version                  (str file-content (assemble-version-header       index options file-content changes)
-                                                                (assemble-changed-declarations index options file-content changes)))))
+  [index {:keys [changes-filepath version] :as options} changes]
+  (let [file-content (io/read-file changes-filepath {:warn? false})]
+       (if-let [last-version (regex/re-last file-content export.config/VERSION-PATTERN)]
+              (do (println last-version version)
+               (cond (-> version empty?)           (str file-content (assemble-changed-declarations index options changes))
+                     (-> version (= last-version)) (str file-content (assemble-changed-declarations index options changes))
+                     :use-version                  (str file-content (assemble-version-header       index options changes)
+                                                                     (assemble-changed-declarations index options changes))))
+              (do
+               (cond (-> version empty?)           (str file-content (assemble-na-header            index options changes)
+                                                                     (assemble-changed-declarations index options changes))
+                     :use-version                  (str file-content (assemble-version-header       index options changes)
+                                                                     (assemble-changed-declarations index options changes)))))))
