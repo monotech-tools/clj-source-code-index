@@ -1,14 +1,9 @@
 
 (ns source-code-index.export.engine
     (:require [io.api :as io]
-              [fruits.vector.api :as vector]
-              [fruits.map.api :as map]
               [source-code-index.core.messages :as core.messages]
               [source-code-index.export.assemble :as export.assemble]
               [source-code-index.export.utils :as export.utils]))
-
-;; ----------------------------------------------------------------------------
-;; ----------------------------------------------------------------------------
 
 ;; ----------------------------------------------------------------------------
 ;; ----------------------------------------------------------------------------

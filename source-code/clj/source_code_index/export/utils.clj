@@ -77,14 +77,14 @@
   ;
   ; @description
   ; Removes source paths from the given 'updated-index' that are not present in the given 'stored-index',
-  ; to prevent misunderstanding declaration changes when a source path has been not even indexed before.
+  ; to prevent misunderstanding declaration changes when a source path has not been even indexed before.
   ;
   ; @param (maps in vector) stored-index
   ; @param (maps in vector) updated-index
   ;
   ; @return (maps in vector)
   [stored-index updated-index]
-  (letfn [(f0 [%] (when (export.utils/source-path-not-indexed? stored-index    (:source-path %))
+  (letfn [(f0 [%] (when (source-path-not-indexed? stored-index                   (:source-path %))
                         (println core.messages/MISSING-SOURCE-PATH-INDEX-WARNING (:source-path %))
                         (-> :filter-not-indexed-source-path)))]
          (vector/remove-items-by updated-index f0)))
