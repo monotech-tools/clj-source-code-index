@@ -1,6 +1,6 @@
 
 (ns source-code-index.export.utils
-    (:require [fruits.vector.api :as vector]
+    (:require [fruits.vector.api               :as vector]
               [source-code-index.core.messages :as core.messages]))
 
 ;; ----------------------------------------------------------------------------
@@ -39,7 +39,7 @@
   ;
   ; @return (boolean)
   [index filepath name]
-  (letfn [(f0 [%] (-> %               (vector/last-result f1))) ; <- The latest source path in the given index that contains the given filepath.
+  (letfn [(f0 [%] (-> %               (vector/last-result f1))) ; <- The last source path in the given index that contains the given filepath.
           (f1 [%] (-> % :source-files (vector/first-match f2))) ; <- ...
           (f2 [%] (-> % :filepath     (= filepath)))            ; <- ...
           (f3 [%] (-> % :declarations (vector/contains-item? name)))]
@@ -93,7 +93,7 @@
   ; @description
   ; Removes source paths from the given 'updated-index' that are not present in the given 'stored-index',
   ; to prevent misunderstanding declaration changes when a source path is indexed for the first time,
-  ; and it has no entry in the stored index yet.
+  ; and it has no entry in the stored index (yet).
   ;
   ; @param (maps in vector) stored-index
   ; @param (maps in vector) updated-index

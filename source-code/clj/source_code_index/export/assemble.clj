@@ -1,11 +1,11 @@
 
 (ns source-code-index.export.assemble
-    (:require [fruits.regex.api :as regex]
-              [fruits.string.api :as string]
-              [fruits.vector.api :as vector]
-              [time.api :as time]
-              [io.api :as io]
-              [source-code-index.export.config :as export.config]))
+    (:require [fruits.regex.api                :as regex]
+              [fruits.string.api               :as string]
+              [fruits.vector.api               :as vector]
+              [io.api                          :as io]
+              [source-code-index.export.config :as export.config]
+              [time.api                        :as time]))
 
 ;; ----------------------------------------------------------------------------
 ;; ----------------------------------------------------------------------------
@@ -89,13 +89,11 @@
   [index {:keys [changes-filepath version] :as options} changes]
   (let [file-content (io/read-file changes-filepath {:warn? false})]
        (if-let [last-version (regex/re-last file-content export.config/VERSION-PATTERN)]
-              (do (println last-version version)
                (cond (-> version empty?)           (str file-content (assemble-changed-declarations index options changes))
                      (-> version (= last-version)) (str file-content (assemble-changed-declarations index options changes))
                      :use-version                  (str file-content (assemble-version-header       index options changes)
-                                                                     (assemble-changed-declarations index options changes))))
-              (do
+                                                                     (assemble-changed-declarations index options changes)))
                (cond (-> version empty?)           (str file-content (assemble-na-header            index options changes)
                                                                      (assemble-changed-declarations index options changes))
                      :use-version                  (str file-content (assemble-version-header       index options changes)
-                                                                     (assemble-changed-declarations index options changes)))))))
+                                                                     (assemble-changed-declarations index options changes))))))

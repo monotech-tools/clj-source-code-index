@@ -1,9 +1,9 @@
 
 (ns source-code-index.export.engine
-    (:require [io.api :as io]
-              [source-code-index.core.messages :as core.messages]
+    (:require [io.api                            :as io]
+              [source-code-index.core.messages   :as core.messages]
               [source-code-index.export.assemble :as export.assemble]
-              [source-code-index.export.utils :as export.utils]))
+              [source-code-index.export.utils    :as export.utils]))
 
 ;; ----------------------------------------------------------------------------
 ;; ----------------------------------------------------------------------------

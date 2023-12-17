@@ -1,21 +1,24 @@
 
 (ns source-code-index.core.engine
-    (:require [source-code-index.map.engine :as map.engine]
-              [source-code-index.import.engine :as import.engine]
-              [source-code-index.export.engine :as export.engine]
-              [source-code-index.core.tests :as core.tests]
-              [source-code-index.core.prototypes :as core.prototypes]
-              [validator.api :as v]))
+    (:require [source-code-index.core.prototypes :as core.prototypes]
+              [source-code-index.core.tests      :as core.tests]
+              [source-code-index.export.engine   :as export.engine]
+              [source-code-index.import.engine   :as import.engine]
+              [source-code-index.map.engine      :as map.engine]
+              [validator.api                     :as v]))
 
 ;; ----------------------------------------------------------------------------
 ;; ----------------------------------------------------------------------------
 
 (defn index-source-files!
   ; @description
-  ; - Reads source files from the given source paths that match the given filename pattern,
-  ;   updates the index.edn file on the given index filepath with def and defn declarations,
-  ;   updates the CHANGES.md file (compared to the previous index) on the given changes filepath.
-  ; - Different source paths can use a shared index file.
+  ; Reads source files from the given source paths that match the given filename pattern,
+  ; updates the 'source-code-index.edn' file at the given index filepath (stores def and defn declarations),
+  ; updates the 'CHANGES.md' file (the changes derived by comparing the current and the previous index)
+  ; at the given changes filepath.
+  ;
+  ; @note
+  ; Different source paths can use a shared index file.
   ;
   ; @param (map) options
   ; {:changes-filepath (string)(opt)

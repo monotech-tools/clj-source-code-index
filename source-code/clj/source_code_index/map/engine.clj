@@ -1,10 +1,10 @@
 
 (ns source-code-index.map.engine
-    (:require [io.api :as io]
-              [fruits.vector.api :as vector]
-              [fruits.map.api :as map]
-              [time.api :as time]
-              [source-code-map.api :as source-code-map]))
+    (:require [fruits.map.api      :as map]
+              [fruits.vector.api   :as vector]
+              [io.api              :as io]
+              [source-code-map.api :as source-code-map]
+              [time.api            :as time]))
 
 ;; ----------------------------------------------------------------------------
 ;; ----------------------------------------------------------------------------
