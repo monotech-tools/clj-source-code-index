@@ -3,7 +3,7 @@
 
 ### Overview
 
-The <strong>clj-source-code-index</strong> is a simple source code declaration index for tracking changes in Clojure projects.
+The <strong>clj-source-code-index</strong> is a simple source code declaration index designed for tracking changes in Clojure projects.
 
 ### deps.edn
 
