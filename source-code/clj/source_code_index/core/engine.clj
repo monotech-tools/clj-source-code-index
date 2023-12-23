@@ -24,7 +24,7 @@
   ; {:changes-filepath (string)(opt)
   ;   Default: "CHANGES.md"
   ;  :filename-pattern (regex-pattern)(opt)
-  ;   Default: #"[a-z\_\d]{1,}\.clj[cs]{0,1}"
+  ;   Default: #"[a-z\_\d]+\.clj[cs]?"
   ;  :index-filepath (string)(opt)
   ;   Default: "source-code-index.edn"
   ;  :source-paths (strings in vector)
