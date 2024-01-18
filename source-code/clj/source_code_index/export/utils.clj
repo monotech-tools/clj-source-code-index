@@ -66,8 +66,8 @@
   ;
   ; @return (boolean)
   [changes]
-  (or (-> changes :added   vector/nonempty?)
-      (-> changes :removed vector/nonempty?)))
+  (or (-> changes :added   vector/not-empty?)
+      (-> changes :removed vector/not-empty?)))
 
 ;; ----------------------------------------------------------------------------
 ;; ----------------------------------------------------------------------------
