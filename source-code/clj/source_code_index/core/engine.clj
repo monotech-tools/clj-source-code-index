@@ -12,10 +12,9 @@
 
 (defn index-source-files!
   ; @description
-  ; Reads source files from the given source paths that match the given filename pattern,
-  ; updates the 'source-code-index.edn' file at the given index filepath (stores def and defn declarations),
-  ; updates the 'CHANGES.md' file (the changes derived by comparing the current and the previous index)
-  ; at the given changes filepath.
+  ; 1. Reads source files from the given source paths that match the given filename pattern.
+  ; 2. Updates the 'source-code-index.edn' file at the given index filepath (stores def and defn declarations).
+  ; 3. Updates the 'CHANGES.md' file (the changes derived by comparing the current and the previous index) at the given changes filepath.
   ;
   ; @note
   ; Different source paths can use a shared index file.
