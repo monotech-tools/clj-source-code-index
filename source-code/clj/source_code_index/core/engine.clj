@@ -34,7 +34,7 @@
   ;                       :source-paths     ["source-code"]
   ;                       :version          "1.2.3"})
   [options]
-  (if (v/valid? options core.tests/OPTIONS-TEST {:prefix "options"})
+  (if (v/valid? options [core.tests/OPTIONS-TEST] {:prefix "options"})
       (let [options (core.prototypes/options-prototype options)]
            (-> [] (map.engine/map-source-paths        options)
                   (import.engine/import-source-paths  options)
